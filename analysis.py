@@ -31,29 +31,32 @@ def task_calc():
         lines = log_file.readlines()
 
         for line in lines:
-            split_1 = line.split("\t") 
-            time_stamp = datetime.datetime.strptime(split_1[0][0:-1], '%Y-%m-%d %H:%M:%S.%f')
-            
-            
-            split_2 = split_1[1].split("->")       
-            split_2[0] = split_2[0].strip()
-            split_2[1] = split_2[1][0:-1].strip()[1:]
-            
+            try:
+                split_1 = line.split("\t") 
+                time_stamp = datetime.datetime.strptime(split_1[0][0:-1], '%Y-%m-%d %H:%M:%S.%f')
+                
+                
+                split_2 = split_1[1].split("->")       
+                split_2[0] = split_2[0].strip()
+                split_2[1] = split_2[1][0:-1].strip()[1:]
+                
 
-            if ((split_2[0] == "Worker has finished executing task") or (split_2[0] == "Worker received task")):
-                split_3 = split_2[1].split(',')                  
-                task_id = split_3[1].split(':')[1].split(']')[0]
-                                
-                if (split_2[0] == "Worker has finished executing task"):                 
-                    ending_time[task_id] = time_stamp
-                
-                if (split_2[0] == "Worker received task"):
-                    starting_time[task_id] = time_stamp
-                
-                if ((task_id in starting_time) and (task_id in ending_time)):
-                    task_times[task_id] = (ending_time[task_id] - starting_time[task_id])
+                if ((split_2[0] == "Worker has finished executing task") or (split_2[0] == "Worker received task")):
+                    split_3 = split_2[1].split(',')                  
+                    task_id = split_3[1].split(':')[1].split(']')[0]
+                                    
+                    if (split_2[0] == "Worker has finished executing task"):                 
+                        ending_time[task_id] = time_stamp
                     
-                    task_time_list.append(task_times[task_id].total_seconds())
+                    if (split_2[0] == "Worker received task"):
+                        starting_time[task_id] = time_stamp
+                    
+                    if ((task_id in starting_time) and (task_id in ending_time)):
+                        task_times[task_id] = (ending_time[task_id] - starting_time[task_id])
+                        
+                        task_time_list.append(task_times[task_id].total_seconds())
+            except:
+                continue
         
         log_file.close()
         i+=1        
