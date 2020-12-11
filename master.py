@@ -118,6 +118,8 @@ def scheduling_tasks():
                 lock.acquire()
                 free_slots[worker_id]['slots'] -= 1
                 lock.release()
+
+            
     
 # ------------------------------------------------------------------------------------------------------------------------------------------------  
   
@@ -182,7 +184,9 @@ def listen_for_jobs():
                     r_task[t_id]['task_id'] = ele['task_id'] 
                     r_task[t_id]['job_id'] = job['job_id']
                     r_task[t_id]['duration'] = ele['duration']
+                    # {key : value} => {t_id : {task_id : #id , job_id : #jid, duration: #did}}
                     reduce_tasks_per_job[job['job_id']].append(r_task[t_id])
+                    # {key : value} => {job_id (<-reduce_tasks_per_job[job['job_id']]): [{t_id : {task_id : #id , job_id : #jid, duration: #did}}] <- Appending happens to this list  }
                 
                 
                 # add map tasks to be scheduled on workers to task queue 
